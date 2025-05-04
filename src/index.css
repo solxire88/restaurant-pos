@@ -1,0 +1,95 @@
+/* 1. Define each font-face */
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-ThinItalic.ttf') format('truetype');
+  font-weight: 100;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-LightItalic.ttf') format('truetype');
+  font-weight: 300;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-BoldItalic.ttf') format('truetype');
+  font-weight: 700;
+  font-style: italic;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Lato';
+  src: url('./assets/type/Lato-BlackItalic.ttf') format('truetype');
+  font-weight: 900;
+  font-style: italic;
+}
+
+/* 2. Global resets (optional but recommended) 
+
+/* 4. Utility classes for weight/style */
+.font-thin     { font-family: 'Lato'; font-weight: 100; font-style: normal; }
+.font-thin-italic { font-family: 'Lato'; font-weight: 100; font-style: italic; }
+.font-light    { font-family: 'Lato'; font-weight: 300; font-style: normal; }
+.font-light-italic { font-family: 'Lato'; font-weight: 300; font-style: italic; }
+.font-normal   { font-family: 'Lato'; font-weight: 400; font-style: normal; }
+.font-italic   { font-family: 'Lato'; font-weight: 400; font-style: italic; }
+.font-bold     { font-family: 'Lato'; font-weight: 700; font-style: normal; }
+.font-bold-italic { font-family: 'Lato'; font-weight: 700; font-style: italic; }
+.font-black    { font-family: 'Lato'; font-weight: 900; font-style: normal; }
+.font-black-italic { font-family: 'Lato'; font-weight: 900; font-style: italic; }
+
+/* 5. Headings inherit Lato bold */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+/* 6. Links */
+
+
+/* 7. Ensure html fills viewport */
+html {
+  height: 100%;
+}
+
+/* color: #1D150B; */
+/* background-color: #F9F9F9; */
