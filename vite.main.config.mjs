@@ -2,10 +2,12 @@ import { defineConfig } from 'vite';
 
 // https://vitejs.dev/config
 export default defineConfig({
-      // also explicitly mark the following as externals:
-    build: {
+  optimizeDeps: {
+    exclude: ['escpos-usb']
+  },
+  build: {
     rollupOptions: {
-        external: ['usb', 'escpos-usb']
+      external: ['usb', 'escpos-usb']
     }
-}
+  }
 });

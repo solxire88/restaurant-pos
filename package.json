@@ -1,16 +1,39 @@
 {
-  "name": "electron-tutorial",
-  "productName": "electron-tutorial",
+  "name": "point-of-sale",
+  "productName": "Point Of Sale",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "scripts": {
+      "start:debug": "electron --trace-warnings --trace-deprecation .",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "make:ia32": "electron-forge make --platform=win32 --arch=ia32",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "echo \"No linting configured\"",
+    "dist:win32": "electron-builder --win --ia32",
+    "dist:win64": "electron-builder --win --x64",
+      "rebuild": "electron-rebuild"
+
+
   },
+  "build": {
+  "appId": "com.yourcompany.pointofsale",
+  "productName": "Point Of Sale",
+  "win": {
+    "target": "nsis"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": false,
+    "allowElevation": true,
+    "allowToChangeInstallationDirectory": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Point Of Sale"
+  }
+},
   "keywords": [],
   "author": "pc ca",
   "license": "MIT",
@@ -30,7 +53,9 @@
     "@types/react-dom": "^19.1.2",
     "@vitejs/plugin-react": "^4.4.1",
     "autoprefixer": "^10.4.21",
-    "electron": "35.2.0",
+    "electron": "22.0.0",
+    "electron-builder": "^26.0.12",
+    "electron-forge-maker-nsis": "^26.0.12",
     "electron-rebuild": "^3.2.9",
     "init": "^0.1.2",
     "npx": "^10.2.2",
@@ -44,6 +69,7 @@
     "bulma": "^1.0.4",
     "electron-squirrel-startup": "^1.0.1",
     "escpos": "^3.0.0-alpha.6",
+    "escpos-network": "^3.0.0-alpha.5",
     "escpos-usb": "^3.0.0-alpha.4",
     "framer-motion": "^12.8.0",
     "iconv-lite": "^0.6.3",

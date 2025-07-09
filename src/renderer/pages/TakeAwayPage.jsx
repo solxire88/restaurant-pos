@@ -1,18 +1,60 @@
 // src/pages/TakeAwayPage.jsx
 import React, { useState, useMemo, useEffect } from 'react';
-import { Search, Pizza, Sandwich, CupSoda, IceCream } from 'lucide-react';
-import { motion } from 'framer-motion';
+import {
+  Search,
+  Plus,
+  Trash2,
+  List,
+  Utensils,
+  Leaf,
+  Pizza,
+  Sandwich,
+  Soup,
+  Drumstick,
+  Users,
+  CupSoda,
+  Droplet,
+  Coffee,
+  Snowflake,
+  Beaker,
+  Donut,
+  IceCream
+} from 'lucide-react';import { motion } from 'framer-motion';
 import Sidebar from '../components/SideBar';
 import OrderPanel from '../components/OrderPanel';
 import OrderSummaryModal from '../components/OrderSummaryModal';
 import logo from '../assets/logo.png';
 
 const categories = [
-  { name: 'All',        icon: null     },
-  { name: 'Pizza',      icon: Pizza    },
-  { name: 'Sandwiches', icon: Sandwich },
-  { name: 'Drinks',     icon: CupSoda  },
-  { name: 'Desserts',   icon: IceCream },
+  { name: 'All',                icon: List       },
+  { name: 'Entrée',             icon: Utensils   },
+  { name: 'Salades',            icon: Leaf       },
+  { name: 'Gratins',            icon: Soup       },
+  { name: 'Baguettes Farcies',  icon: Sandwich  },
+  { name: 'Calzones',           icon: Pizza      },
+  { name: 'Sandwiches',         icon: Sandwich   },
+  { name: 'Tacos',              icon: Sandwich   },
+  { name: 'Burgers',            icon: Sandwich  },
+  { name: 'Fajitas',            icon: Soup       },
+  { name: 'Chapati',            icon: Sandwich   },
+  { name: 'Box',                icon: Users      },
+  { name: 'Wings',              icon: Drumstick  },
+  { name: 'Snacks',             icon: Sandwich  },  
+  { name: 'Plats',              icon: Utensils   },
+  { name: 'Plat Familial',      icon: Users      },
+  { name: 'Pizza (Tomate)',     icon: Pizza      },
+  { name: 'Pizza (Blanche)',    icon: Pizza      },
+  { name: 'Boissons',           icon: CupSoda    },
+  { name: 'Jus Naturels',       icon: Droplet    },
+  { name: 'Milkshakes',         icon: IceCream   },
+  { name: 'Boissons Chaudes',   icon: Coffee     },
+  { name: 'Boissons Froides',   icon: Snowflake  },
+  { name: 'Bubbles',            icon: Soup       },
+  { name: 'Crêpes',             icon: Donut      },
+  { name: 'Pancakes',           icon: Donut      },
+  { name: 'Desserts',           icon: IceCream   },
+  { name: 'Glaces',             icon: IceCream   },
+
 ];
 
 export default function TakeAwayPage() {
@@ -49,8 +91,12 @@ export default function TakeAwayPage() {
   const handleCancel     = () => setOrderItems([]);
 
   // Finalize payment
-  const handleFinishPayment = () => {
-    // your save logic...
+  const handleFinishPayment = async () => {
+    const total = orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    // Increment daily total by the sale amount
+    await window.api.incrementDailyTotal(total);
+    // Increment order count
+    await window.api.incrementOrderCount();
     setOrderItems([]);
     setShowModal(false);
   };
@@ -63,8 +109,6 @@ export default function TakeAwayPage() {
       return byCat && bySearch;
     });
   }, [menuItems, searchTerm, selectedCategory]);
-
-
 
   // print handlers
   const printCustomer = () => {
@@ -80,14 +124,13 @@ export default function TakeAwayPage() {
       });
   };
 
-
   return (
     <>
       <div className="flex h-screen">
         <Sidebar />
 
         <div className="flex-1 p-6 bg-white overflow-auto">
-          <h1 className="text-2xl font-bold mb-4">Take Away Orders</h1>
+          <h1 className="text-2xl font-bold mb-4">Commandes à emporter</h1>
 
           {/* Search */}
           <div className="mb-4">
@@ -98,23 +141,24 @@ export default function TakeAwayPage() {
                 placeholder="Search..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#ED6827]"
+                className="pl-10 pr-4 py-2 w-full border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#4E71FF]"
               />
             </div>
           </div>
 
           {/* Categories */}
-          <div className="flex space-x-2 mb-6 overflow-x-auto">
+          <div className="flex space-x-2 mb-6 overflow-x-auto flex-wrap gap-2 overflow-y-hidden"> 
             {categories.map(({ name, icon: Icon }) => (
               <motion.button
                 key={name}
                 onClick={() => setCategory(name)}
                 whileTap={{ scale: 0.95 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full ${
-                  selectedCategory === name
-                    ? 'bg-[#ED6827] text-white'
-                    : 'bg-gray-200 text-[#1D150B] hover:bg-[#ffe6d8]'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 h-12 rounded-full font-medium transition-all transform whitespace-nowrap
+                  ${selectedCategory === name
+                    ? 'bg-[#4E71FF] text-white scale-105'
+                    : 'bg-gray-200 text-[#1D150B] hover:bg-[#ffe6d8] hover:scale-105'
+                  }
+                `}
               >
                 {Icon && <Icon className="w-5 h-5" />}
                 {name}
@@ -123,7 +167,7 @@ export default function TakeAwayPage() {
           </div>
 
           {/* Menu grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredMenu.map(item => (
               <motion.div
                 key={item.id}
@@ -135,12 +179,12 @@ export default function TakeAwayPage() {
                   <h3 className="text-2xl font-semibold text-[#1D150B] mb-2">
                     {item.name}
                   </h3>
-                  <p className="text-base text-gray-500 mb-4 flex-1">
+                  {/* <p className="text-base text-gray-500 mb-4 flex-1">
                     {item.description}
-                  </p>
+                  </p> */}
                 </div>
-                <span className="text-xl font-bold text-[#ED6827]">
-                  ${item.price.toFixed(2)}
+                <span className="text-xl font-bold text-[#4E71FF]">
+                  {item.price} D.A
                 </span>
               </motion.div>
             ))}
@@ -162,7 +206,6 @@ export default function TakeAwayPage() {
           onFinishPayment={handleFinishPayment}
           onPrintCustomer={printCustomer}
           onPrintChef={printChef}
-          
         />
       )}
     </>

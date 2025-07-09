@@ -1,17 +1,24 @@
 // src/components/TablePanel.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Ticket, UtensilsCrossed, Receipt, CreditCard, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function TableSummaryModal({
   table,
   onClose,
-  onPrintTable,
-  onPrintChef,
-  onPrintCustomer,
-  onFinishPayment
-}) {
+  reload}) {
   const total = table.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+
+  const handleFinish = async () => {
+    // Increment daily total by this table's bill
+    await window.api.incrementDailyTotal(total);
+    // Increment order count
+    // await window.api.incrementOrderCount();
+    await window.api.deleteTableOrder(table.id);
+    reload();
+
+    onClose();
+  };
 
   return (
     <AnimatePresence>
@@ -42,7 +49,7 @@ function TableSummaryModal({
 
           {/* Header */}
           <h2 className="text-2xl font-bold mb-4 text-[#1D150B]">
-            Table {table.tableNumber} Summary
+            Résumé de la table {table.tableNumber}
           </h2>
 
           {/* Itemized list */}
@@ -53,7 +60,7 @@ function TableSummaryModal({
                   {item.quantity}× {item.name}
                 </span>
                 <span>
-                  ${(item.price * item.quantity).toFixed(2)}
+                  {(item.price * item.quantity).toFixed(2)} D.A
                 </span>
               </li>
             ))}
@@ -61,52 +68,52 @@ function TableSummaryModal({
 
           {/* Total */}
           <div className="flex justify-between items-center font-semibold text-lg mb-6">
-            <span>Total:</span>
-            <span className="text-[#ED6827]">${total.toFixed(2)}</span>
+            <span>Total :</span>
+            <span className="text-[#4E71FF]">{total.toFixed(2)} D.A</span>
           </div>
 
           {/* Three print buttons side-by-side */}
           <div className="flex gap-3 mb-6">
             <motion.button
-              onClick={onPrintTable}
+              onClick={() => window.api.printTableTicket(table.tableNumber, table.count)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex-1 flex items-center justify-center gap-2 bg-[#ED6827] text-white py-3 rounded-lg text-sm font-medium"
+              className="flex-1 flex flex-col items-center justify-center gap-2 bg-[#4E71FF] text-white py-3 rounded-lg text-sm font-medium"
             >
               <Ticket size={18} />
-              Table Ticket
+              Ticket Table
             </motion.button>
 
             <motion.button
-              onClick={onPrintChef}
+              onClick={() => window.api.printTableChef(table.tableNumber, table.items, table.count)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex-1 flex items-center justify-center gap-2 bg-gray-200 text-[#1D150B] py-3 rounded-lg text-sm font-medium"
+              className="flex-1 flex flex-col items-center justify-center gap-2 bg-gray-200 text-[#1D150B] py-3 rounded-lg text-sm font-medium"
             >
               <UtensilsCrossed size={18} />
-              Chef Ticket
+              Ticket Cuisine
             </motion.button>
 
             <motion.button
-              onClick={onPrintCustomer}
+              onClick={() => window.api.printTableCustomer(table.tableNumber, table.items, table.count)}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="flex-1 flex items-center justify-center gap-2 bg-gray-200 text-[#1D150B] py-3 rounded-lg text-sm font-medium"
+              className="flex-1 flex flex-col items-center justify-center gap-2 bg-gray-200 text-[#1D150B] py-3 rounded-lg text-sm font-medium"
             >
               <Receipt size={18} />
-              Customer Receipt
+              Ticket Client
             </motion.button>
           </div>
 
           {/* Finish Payment full-width */}
           <motion.button
-            onClick={onFinishPayment}
+            onClick={handleFinish}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg text-lg font-semibold"
           >
             <CreditCard size={20} />
-            Finish Payment
+            Terminer le paiement
           </motion.button>
         </motion.div>
       </motion.div>
@@ -114,14 +121,27 @@ function TableSummaryModal({
   );
 }
 
-export default function TablePanel({ tables = [], onRemoveTable }) {
+export default function TablePanel({}) {
   const [selected, setSelected] = useState(null);
+  const [tables, setTables] = useState([]);
+
+  useEffect(() => {
+    reload();
+  }, []);
+
+  // helper to reload
+  const reload = async () => {
+    const data = await window.api.fetchTableOrders();
+    setTables(data || []);
+    console.log('Tables fetched:', data);
+  };
+
 
   return (
     <>
       <aside className="w-80 bg-[#F9F9F9] p-6 flex flex-col shadow-xl">
         <h2 className="text-2xl font-bold mb-6 text-[#1D150B]">
-          Occupied Tables
+          Tables occupées
         </h2>
 
         <ul className="flex-1 space-y-4 overflow-y-auto mb-6">
@@ -138,17 +158,13 @@ export default function TablePanel({ tables = [], onRemoveTable }) {
               <span className="font-medium text-lg">
                 Table {t.tableNumber}
               </span>
-              <span className="text-[#ED6827] font-semibold">
-                ${t.bill.toFixed(2)}
+              <span className="text-[#4E71FF] font-semibold">
+                {t.bill} D.A
               </span>
             </motion.li>
           ))}
         </ul>
 
-        <div className="flex justify-between items-center mb-4 text-lg font-semibold">
-          <span>Total:</span>
-          <span>${tables.reduce((sum, t) => sum + t.bill, 0).toFixed(2)}</span>
-        </div>
       </aside>
 
       {/* Summary Modal */}
@@ -156,13 +172,7 @@ export default function TablePanel({ tables = [], onRemoveTable }) {
         <TableSummaryModal
           table={selected}
           onClose={() => setSelected(null)}
-          onPrintTable={() => console.log('Print Table Ticket', selected)}
-          onPrintChef={() => console.log('Print Chef Ticket', selected)}
-          onPrintCustomer={() => console.log('Print Customer Receipt', selected)}
-          onFinishPayment={() => {
-            onRemoveTable(selected.idx);
-            setSelected(null);
-          }}
+          reload = {reload}
         />
       )}
     </>

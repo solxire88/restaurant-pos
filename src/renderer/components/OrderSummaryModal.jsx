@@ -1,6 +1,6 @@
 // components/OrderSummaryModal.jsx
 import React from 'react';
-import { X, Printer, Clipboard, CreditCard } from 'lucide-react';
+import { X, Printer, Clipboard, CreditCard, ChefHat, Receipt } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function OrderSummaryModal({
@@ -43,7 +43,7 @@ export default function OrderSummaryModal({
 
           {/* Header */}
           <h2 className="text-3xl font-bold mb-6 text-[#1D150B]">
-            Order Summary
+            Résumé de la commande
           </h2>
 
           {/* Items */}
@@ -53,15 +53,15 @@ export default function OrderSummaryModal({
                 <span>
                   {item.quantity}× {item.name}
                 </span>
-                <span>${(item.price * item.quantity).toFixed(2)}</span>
+                <span>{(item.price * item.quantity).toFixed(2)} D.A</span>
               </li>
             ))}
           </ul>
 
           {/* Total */}
           <div className="flex justify-between items-center font-semibold text-2xl mb-8">
-            <span>Total:</span>
-            <span>${total.toFixed(2)}</span>
+            <span>Total :</span>
+            <span>{total} D.A</span>
           </div>
 
           {/* Print buttons side-by-side */}
@@ -70,10 +70,10 @@ export default function OrderSummaryModal({
               onClick={onPrintCustomer}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="flex-1 flex items-center justify-center gap-2 bg-[#ED6827] text-white py-3 rounded-lg text-sm font-medium"
+              className="flex-1 flex items-center justify-center gap-2 bg-[#4E71FF] text-white py-3 rounded-lg text-sm font-medium"
             >
-              <Printer size={18} />
-              Customer Receipt
+              <Receipt size={18} />
+              Ticket Client
             </motion.button>
 
             <motion.button
@@ -82,8 +82,8 @@ export default function OrderSummaryModal({
               whileTap={{ scale: 0.97 }}
               className="flex-1 flex items-center justify-center gap-2 bg-gray-200 text-[#1D150B] py-3 rounded-lg text-sm font-medium"
             >
-              <Clipboard size={18} />
-              Chef Ticket
+              <ChefHat size={18} />
+              Ticket Cuisine
             </motion.button>
           </div>
 
@@ -95,7 +95,7 @@ export default function OrderSummaryModal({
             className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg text-lg font-semibold"
           >
             <CreditCard size={20} />
-            Finish Payment
+            Terminer le paiement
           </motion.button>
         </motion.div>
       </motion.div>

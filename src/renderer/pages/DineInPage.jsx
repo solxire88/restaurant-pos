@@ -1,4 +1,3 @@
-// src/pages/DineInPage.jsx
 import React, { useState } from 'react';
 import { Table } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -7,29 +6,33 @@ import TablePanel from '../components/TablePanel';
 import TableOrderPage from './TableOrderPage';
 
 // mock table list
-const allTables = Array.from({ length: 9 }, (_, i) => ({
+const allTables = Array.from({ length: 15 }, (_, i) => ({
   id: i + 1,
   tableNumber: i + 1,
 }));
 
 export default function DineInPage() {
   const [currentTable, setCurrentTable] = useState(null);
-  // finished orders: store tableNumber, items[], and bill total
-  const [completedOrders, setCompletedOrders] = useState([]);
 
-  const handleTableClick = (tbl) => setCurrentTable(tbl);
-  const handleCancelOrder = () => setCurrentTable(null);
+  const handleTableClick = (tbl) => {
+    setCurrentTable(tbl);
+  };
 
-  const handleCompleteOrder = ({ tableNumber, items, total }) => {
-    setCompletedOrders(prev => [
-      ...prev,
-      { tableNumber, items, bill: total }
-    ]);
+  const handleCancelOrder = () => {
     setCurrentTable(null);
   };
 
-  const handleRemoveTable = idx => {
-    setCompletedOrders(prev => prev.filter((_, i) => i !== idx));
+  // Use closure to access currentTable; expect onComplete called with { items, total }
+  const handleCompleteOrder = async ({ items, total }) => {
+    if (!currentTable) return console.error('No table!');
+    const tableNumber = currentTable.tableNumber;
+
+    // the actual save already happened in TableOrderPage,
+    // but if you need additional steps, do them here.
+
+    // Go back to the grid/panel
+    setCurrentTable(null);
+
   };
 
   // If taking an order, show TableOrderPage
@@ -46,14 +49,14 @@ export default function DineInPage() {
     );
   }
 
-  // Otherwise, show table grid + panel of completed orders
+  // Otherwise, show table grid + panel of active orders
   return (
     <div className="flex h-screen">
       <Sidebar />
 
       <main className="flex-1 p-6 bg-white overflow-auto">
-        <h1 className="text-2xl font-bold mb-6">Dine-In Tables</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <h1 className="text-2xl font-bold mb-6">Commandes Sur Place</h1>
+        <div className="grid grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {allTables.map(tbl => (
             <motion.div
               key={tbl.id}
@@ -73,10 +76,7 @@ export default function DineInPage() {
         </div>
       </main>
 
-      <TablePanel
-        tables={completedOrders}
-        onRemoveTable={handleRemoveTable}
-      />
+      <TablePanel />
     </div>
   );
 }
